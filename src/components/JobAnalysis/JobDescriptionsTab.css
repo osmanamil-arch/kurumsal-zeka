@@ -1,0 +1,375 @@
+.job-analysis-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  height: 100%;
+}
+
+.ja-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #F8FAFC, #F1F5F9);
+  border-left: 4px solid #4F46E5;
+}
+
+.ja-main-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+/* Sidebar & Tree */
+.ja-sidebar {
+  padding: 1.5rem 1rem;
+  min-height: 500px;
+}
+
+.ja-sidebar-header {
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #E2E8F0;
+}
+
+.ja-tree {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.ja-tree-node {
+  display: flex;
+  flex-direction: column;
+}
+
+.ja-tree-family {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: #475569;
+}
+
+.ja-tree-family:hover {
+  background: #F1F5F9;
+}
+
+.ja-tree-family.active {
+  background: #EEF2FF;
+  color: #4F46E5;
+}
+
+.ja-tree-count {
+  margin-left: auto;
+  font-size: 0.7rem;
+  background: white;
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  border: 1px solid #E2E8F0;
+  color: #64748B;
+}
+
+.ja-tree-children {
+  padding-left: 1.5rem;
+  margin-top: 0.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  border-left: 1px solid #E2E8F0;
+  margin-left: 1rem;
+}
+
+.ja-tree-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.ja-tree-item:hover {
+  background: #F8FAFC;
+}
+
+.ja-tree-item.active {
+  background: #F0FDF4;
+  color: #166534;
+}
+
+.ja-tree-item-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #CBD5E1;
+}
+
+.ja-tree-item.active .ja-tree-item-dot {
+  background: #22C55E;
+}
+
+.ja-job-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #334155;
+}
+
+.ja-tree-item.active .ja-job-title {
+  color: #166534;
+}
+
+.ja-job-level {
+  font-size: 0.7rem;
+  color: #94A3B8;
+}
+
+/* Right Panel JD Card */
+.ja-jd-card {
+  padding: 0;
+  overflow: hidden;
+}
+
+.ja-jd-header {
+  padding: 1.5rem 2rem;
+  background: #F8FAFC;
+  border-bottom: 1px solid #E2E8F0;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.ja-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+}
+
+.ja-tag {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #334155;
+  background: white;
+  padding: 0.3rem 0.75rem;
+  border-radius: 12px;
+  border: 1px solid #E2E8F0;
+}
+
+.ja-jd-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.ja-jd-body {
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.ja-section-title {
+  margin: 0 0 1rem 0;
+  font-size: 1.1rem;
+  color: #0F172A;
+  border-bottom: 2px solid #F1F5F9;
+  padding-bottom: 0.5rem;
+}
+
+/* Lists and Grids */
+.ja-list {
+  margin: 0;
+  padding-left: 1.25rem;
+  color: #475569;
+  line-height: 1.6;
+}
+
+.ja-list li {
+  margin-bottom: 0.5rem;
+}
+
+.ja-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+.ja-req-box {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.ja-req-item {
+  font-size: 0.9rem;
+  color: #334155;
+  background: #F8FAFC;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  border: 1px solid #E2E8F0;
+}
+
+.ja-req-item strong {
+  margin-right: 0.5rem;
+  color: #0F172A;
+}
+
+/* Competency Bars */
+.ja-competencies-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 3rem;
+  row-gap: 1rem;
+}
+
+.ja-progress-bg {
+  height: 8px;
+  background: #F1F5F9;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.ja-progress-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 1s ease-out;
+}
+
+/* AI Suggestions Box */
+.ja-suggestions-box {
+  background: linear-gradient(135deg, #FFFBEB, #FEF3C7);
+  border: 1px solid #FDE68A;
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.ja-sugg-icon {
+  font-size: 1.5rem;
+  background: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.ja-test-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.ja-test-tag {
+  background: white;
+  border: 1px solid #FCD34D;
+  color: #B45309;
+  padding: 0.4rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+/* Buttons */
+.ja-btn {
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+}
+
+.ja-btn.primary {
+  background: #4F46E5;
+  color: white;
+  box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2);
+}
+
+.ja-btn.primary:hover {
+  background: #4338CA;
+}
+
+.ja-btn.secondary {
+  background: white;
+  color: #334155;
+  border: 1px solid #E2E8F0;
+}
+
+.ja-btn.secondary:hover {
+  background: #F8FAFC;
+  border-color: #CBD5E1;
+}
+
+.ja-btn.ghost {
+  background: transparent;
+  color: #64748B;
+}
+
+.ja-btn.ghost:hover {
+  background: #F1F5F9;
+  color: #334155;
+}
+
+.ja-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 500px;
+  text-align: center;
+}
+
+/* Modal Styles */
+.ja-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(4px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ja-modal {
+  width: 100%;
+  max-width: 500px;
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.ja-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #CBD5E1;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: #334155;
+  transition: all 0.2s;
+  box-sizing: border-box;
+}
+
+.ja-input:focus {
+  outline: none;
+  border-color: #6366F1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}

@@ -1,0 +1,111 @@
+.salary-management-module {
+    padding: 20px;
+}
+
+.salary-tabs {
+    display: flex;
+    gap: 10px;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+
+.bands-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.calibration-sidebar h4 {
+    color: #ffffff;
+    margin-bottom: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 10px;
+}
+
+.bands-header h3 {
+    color: #fff;
+}
+
+.spread-control {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.spread-control label {
+    font-size: 0.85rem;
+    color: #eee;
+}
+
+.bands-table-wrapper {
+    overflow-x: auto;
+}
+
+.bands-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.bands-table th {
+    background: rgba(108, 92, 231, 0.2);
+    color: #a29bfe;
+    padding: 15px;
+    text-align: left;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    border-bottom: 2px solid rgba(108, 92, 231, 0.3);
+}
+
+.mid-col {
+    font-weight: bold;
+    color: #a29bfe; /* Lavender - very visible on dark */
+}
+
+.bands-table td {
+    padding: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    color: #ffffff; /* Contrast fix */
+    font-size: 0.9rem;
+}
+
+.badge-score {
+    background: rgba(46, 213, 115, 0.2);
+    color: #2ed573;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-weight: bold;
+}
+
+.badge-grade {
+    background: rgba(108, 92, 231, 0.2);
+    color: #a29bfe;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-weight: bold;
+}
+
+.compa-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-weight: bold;
+}
+
+.compa-badge.low { background: rgba(255, 71, 87, 0.2); color: #ff4757; }
+.compa-badge.normal { background: rgba(46, 213, 115, 0.2); color: #2ed573; }
+.compa-badge.high { background: rgba(255, 159, 67, 0.2); color: #ff9f43; }
+
+.scarcity-tag {
+    display: inline-block;
+    margin-left: 8px;
+    background: rgba(255, 71, 87, 0.15);
+    color: #ff4757;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    border: 1px solid rgba(255, 71, 87, 0.3);
+    cursor: help;
+}

@@ -1,0 +1,49 @@
+.job-evaluation-module {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.job-evaluation-tabs {
+    display: flex;
+    flex-direction: row; /* Yan yana */
+    gap: 15px;
+    padding: 15px 25px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.tab-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    padding: 10px 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.tab-btn:hover {
+    color: var(--text-main);
+    background: var(--border-color);
+}
+
+.tab-btn.active {
+    color: var(--primary);
+    background: rgba(108, 92, 231, 0.15);
+    box-shadow: 0 4px 15px rgba(108, 92, 231, 0.05);
+}
+
+[data-theme="light"] .tab-btn.active {
+    background: rgba(91, 76, 219, 0.15);
+}
+
+.job-evaluation-content {
+    flex: 1;
+    overflow-y: auto;
+}

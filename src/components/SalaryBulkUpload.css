@@ -1,0 +1,82 @@
+.bulk-upload-container {
+    padding: 30px;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.upload-header h4 {
+    margin: 0 0 8px 0;
+    color: #fff;
+    font-size: 1.2rem;
+}
+
+.upload-header p {
+    margin: 0;
+    color: #888;
+    font-size: 0.9rem;
+}
+
+.upload-area {
+    border: 2px dashed rgba(108, 92, 231, 0.3);
+    border-radius: 12px;
+    padding: 40px;
+    text-align: center;
+    transition: all 0.3s;
+    background: rgba(108, 92, 231, 0.05);
+}
+
+.upload-area:hover {
+    border-color: #6c5ce7;
+    background: rgba(108, 92, 231, 0.1);
+}
+
+.file-input-label {
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    color: #a29bfe;
+    font-weight: 600;
+}
+
+.file-input-label .icon {
+    font-size: 3rem;
+}
+
+.template-info {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 20px;
+}
+
+.template-info h5 {
+    color: #aaa;
+    margin-bottom: 12px;
+}
+
+.template-info table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8rem;
+    color: #888;
+}
+
+.template-info th, .template-info td {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 8px;
+    text-align: left;
+}
+
+.error-msg {
+    margin-top: 12px;
+    color: #ff4757;
+    font-size: 0.9rem;
+}
+
+.loading-spinner {
+    margin-top: 12px;
+    color: #6c5ce7;
+    font-weight: bold;
+}

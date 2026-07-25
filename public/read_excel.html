@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+</head>
+<body>
+  <pre id="out">Loading...</pre>
+  <script>
+    fetch('/data.xls').then(res => res.arrayBuffer()).then(ab => {
+      const wb = XLSX.read(ab, { type: 'array' });
+      const sheetNames = wb.SheetNames;
+      let output = "SHEETS: " + sheetNames.join(', ') + "\n\n";
+      
+      const sheet = wb.Sheets[sheetNames[0]]; // BY ÇMA usually index 0
+      const json = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+      output += JSON.stringify(json.slice(0, 25), null, 2);
+      
+      document.getElementById('out').textContent = output;
+    }).catch(e => {
+      document.getElementById('out').textContent = e.toString();
+    });
+  </script>
+</body>
+</html>

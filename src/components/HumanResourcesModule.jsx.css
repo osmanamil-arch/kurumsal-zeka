@@ -1,0 +1,142 @@
+.hr-module {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.org-chart-container, .skill-matrix-container, .training-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.org-tree {
+  padding: 1.5rem;
+  background: white;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  overflow-x: auto;
+}
+
+.org-node-wrapper {
+  margin-left: 2rem;
+  padding-left: 1.5rem;
+  border-left: 2px solid var(--border-color);
+  position: relative;
+}
+
+.org-node-wrapper::before {
+  content: '';
+  position: absolute;
+  top: 1.5rem;
+  left: 0;
+  width: 1rem;
+  height: 2px;
+  background: var(--border-color);
+}
+
+.org-node-wrapper.root {
+  margin-left: 0;
+  padding-left: 0;
+  border-left: none;
+}
+
+.org-node-wrapper.root::before {
+  display: none;
+}
+
+.org-node {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: #F8FAFC;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  width: fit-content;
+  min-width: 220px;
+  margin-bottom: 1.5rem;
+  transition: transform 0.2s, background 0.2s;
+}
+
+.org-node:hover {
+  transform: translateX(5px);
+  background: #EFF6FF;
+  border-color: #3B82F6;
+}
+
+.org-node.primary {
+  background: #EEF2FF;
+  border-color: #4F46E5;
+}
+
+.node-avatar {
+  background: #E2E8F0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.node-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.node-info strong {
+  font-size: 0.95rem;
+  color: var(--text-main);
+}
+
+.node-info span {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.kobi-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.kobi-table th {
+  background: #F8FAFC;
+  padding: 1rem;
+  text-align: left;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.kobi-table td {
+  padding: 1rem;
+  font-size: 0.9rem;
+  color: var(--text-main);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.kobi-table tr:hover {
+  background: rgba(79, 70, 229, 0.02);
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  border-radius: 1rem;
+  transition: transform 0.2s;
+}
+
+.glass-card:hover {
+  transform: translateY(-5px);
+}

@@ -1,0 +1,119 @@
+0: HİÇ YOK        1:VAR AMA KÖTÜ     2:VAR VE NORMAL     3: VAR VE İYİ,,,,,,,
+,,,,,,,
+No,BOYUT,Göstergeler,Şirketin Puanı ,Önem Derecesi,Olması Gereken ,,Şirketin Puanı 
+1,İK,Organizasyon şeması var mı ve bu şema uygulanıyor mu,2,10,3,30,20
+2,İK,Görev yetki ve sorumluluklar belli mi ve yazılı mı,2,10,3,30,20
+3,KALİTE,Şirket içi raporlama sistemi var mı,1,10,3,30,10
+4,YÖNETİM,Yönetim kurulu toplantıları periyodik olarak yapılıyor mu,0,10,3,30,0
+5,YÖNETİM,Yönetim kurulunun aldığı kararlar yazılıyor mu,3,10,3,30,30
+6,YÖNETİM,Yöneticilerin periyodik toplantıları var mı,3,3,3,9,9
+7,KALİTE,ISO belgesi-belgeleri var mı,2,6,3,18,12
+8,ARGE,Düzenli Ar-Ge veya Ür-Ge çalışmaları yapılıyor mu,3,6,3,18,18
+9,FİNANS,Aylık (veya üç aylık) gelir tablosu ve bilanço çıkıyor mu,3,10,3,30,30
+10,İK,Personel performans değerleme sistemi var mı,1,2,3,6,2
+11,İK,Yeni işe başlayanlara oryantasyon eğitimleri yapılıyor mu,0,1,3,3,0
+12,YÖNETİM,Şirket kurumsal performans değerleme sistemi var mı,0,5,3,15,0
+13,YÖNETİM,Gerekli alanlarda profesyonel (yetkin) yönetici var mı,1,10,3,30,10
+14,FİNANS,Bütçe yıllık olarak oluşturuluyıor ve takip ediliyor mu?,2,5,3,15,10
+15,YÖNETİM,Hedefler yazılı bir şekilde belirleniyor ve takip ediliyor mu,3,10,3,30,30
+16,YÖNETİM,Rekabet analizi yapılıyor mu,2,5,3,15,10
+17,İK,Kariyer planları var mı,2,1,3,3,2
+18,İK,Şirket disiplin yönetmeliği var mı,0,4,3,12,0
+19,KALİTE,Şirket içi politikalar belli ve yazılı mı,0,6,3,18,0
+20,İK,Şirket çalışanlarına yönelik çalışma ilkeleri var mı,0,8,3,24,0
+21,YÖNETİM,"Ortakların görev, yetki ve sorumlulukları belli ve yazılı mı",2,10,3,30,20
+22,YÖNETİM,Ortakların çalışma ilkeleri var mı,2,10,3,30,20
+23,ÜRETİM,Maliyetler doğru hesaplanıyor mu,2,10,3,30,20
+24,ARGE,Şirkette yürütülen bir proje-projeler var mı,3,4,3,12,12
+25,İK,Personel özlük dosyaları var mı,2,9,3,27,18
+26,İK,Çalışanlarla memnuniyet anketi yapılıyor mu,2,7,3,21,14
+27,SATINALMA,Tedarikçilerle memnuniyet araştırması yapılıyor mu,0,7,3,21,0
+28,YÖNETİM,Şirket vizyonu belli mi,2,10,3,30,20
+29,YÖNETİM,Yetki devri yapılmış mı,1,4,3,12,4
+30,YÖNETİM,Şirket kurumsal kimlik çalışması var mı,2,8,3,24,16
+31,İK,"Personel devir hızı nedir (1-düşük, 0-Yüksek, kritik nokta % 10)",2,6,3,18,12
+32,ÜRETİM,Üretim planlama birimi var mı,3,6,3,18,18
+33,KALİTE,Kalite güvence sistemi mevcut mu,2,5,3,15,10
+34,İK,İş analizi çalışmaları yapılmış mı,2,5,3,15,10
+35,SATINALMA,Etkin bir depo yönetimi var mı,2,8,3,24,16
+36,PAZARLAMA,Pazarlama biriminin pazar bilgisi var mı,2,6,3,18,12
+37,YÖNETİM,Üst yönetim finansal raporları okuyabiliyor mu,1,9,3,27,9
+38,İK,Zorunlu olanlar hariç şirket içi eğitimler var mı,2,8,3,24,16
+39,İK,Çalışanların önerilerini toplamaya yönelik bir sistem var mı,2,6,3,18,12
+40,İK,İşe alımlarda yazılı bir takım ilkeler (prosedür) var mı,0,5,3,15,0
+41,YÖNETİM,Yapılan yatırımlarla ilgili fizibilite çalışmaları var mı,0,2,3,6,0
+42,YÖNETİM,STK'lara üyelik var mı,3,1,3,3,3
+43,PAZARLAMA,Yurtdışı fuar ve gezilere stant açarak katılım sağlanıyor mu,1,7,3,21,7
+44,HALKLA İLİŞKİLER,Web sitesinde en az iki dille bilgilendirme var mı,3,8,3,24,24
+45,KALİTE,Müşteri memnuniyet anketleri yapılıyor mu?,0,6,3,18,0
+46,REKLAM,Sosyal sorumluluk projeleri yürütülmüş mü,0,1,3,3,0
+47,YÖNETİM,Şirket anayasası var mı,0,10,3,30,0
+48,YÖNETİM,Katılımcı yönetim anlayışı var mı,0,6,3,18,0
+49,İK,Şirket içi iletişim düzeyi nasıl,2,5,3,15,10
+50,İK,Şirket içi ekip ruhu düzeyi yeterli mi,1,6,3,18,6
+51,KALİTE,"Çalışanların yaptığı işi tanımlayan dokümanlar var mı (prosedürler, iş tanımları)",2,5,3,15,10
+52,İK,Mesleki gelişim için çalışanlara eğitimler veriliyor mu,2,5,3,15,10
+53,ÜRETİM,Verimlilik ölçümleri yapılıyor mu,1,6,3,18,6
+54,PAZARLAMA,Satış geliştirme çalışmaları yapılıyor mu,2,10,3,30,20
+55,İK,"Kurum içi iletişim sistemi yeterli mi (mail, pano vb.)",3,5,3,15,15
+56,İK,Çalışanların motivasyonlarını artırıcı şirket içi ve dışı etkinlikler düzenleniyor mu,2,6,3,18,12
+57,KALİTE,İş süreçleri belli midir-yazılı ve çizilmiş bir iş akış planı var mı,2,7,3,21,14
+58,KALİTE,Ürün kalitesi analizleri yapılmakta mıdır,3,10,3,30,30
+59,PAZARLAMA,Markalar tescilli mi,3,8,3,24,24
+60,YÖNETİM,Şirket avukatı var mı,3,5,3,15,15
+61,İK,Şirket içi ödül ve ceza sistemi var mı,2,5,3,15,10
+62,YÖNETİM,Yıllık değerlendirme toplantıları yapılır mı,0,10,3,30,0
+63,SATINALMA,Etkin bir stok yönetim sistemi var mı,1,6,3,18,6
+64,SATINALMA,Satınalma etkin bir şekilde yapılıyor mu,2,8,3,24,16
+65,MUHASEBE,Muhasebe yönetime sürekli bilgi akışı sağlıyor mu,2,9,3,27,18
+66,FİNANS,Kasa giriş çıkışları günlük hatasız yapılıyor mu,3,8,3,24,24
+67,YÖNETİM,Şirket yöneticileri şirketi dışarıda iken takip edebiliyor mu,0,8,3,24,0
+68,ÜRETİM,Sürekli iyileştirme mantığı var mı,1,7,3,21,7
+69,İK,"İnsan kaynakları uygulamaları standart mı (tatiller, mesai saatleri, fazla mesai)",2,5,3,15,10
+70,İK,İşçi sağlığı ve iş güvenliği çalışmaları yeterli mi,2,10,3,30,20
+71,İK,Terfi ve atamalar liyakate göre yapılıyor mu,2,2,3,6,4
+72,PAZARLAMA,Ürün katalogları ve şirket tanıtım çalışmaları yeterli mi,2,10,3,30,20
+73,İK,Yöneticilerin eğitimleri yeterli düzeyde mi,3,6,3,18,18
+74,İK,Beyaz yakalı çalışanların sayısı yeterli mi,3,7,3,21,21
+75,ÜRETİM,Atık yönetim sisteminiz var mı,1,2,3,6,2
+76,PAZARLAMA,Pazarlamadan üretime bilgi akışı var mı,2,8,3,24,16
+77,MUHASEBE,Şirket içi arşivleme sistemi var mı,2,6,3,18,12
+78,ÜRETİM,Arıza veya bakımda müdahale hızı yüksek mi,1,6,3,18,6
+79,YÖNETİM,Fiziksel olarak  çalışma ortamı yeterli midir,2,4,3,12,8
+80,İK,Personelin çalışma ve dinlenme ortamıları yeterli midir,2,7,3,21,14
+81,ÜRETİM,Risk analizleri yapılmış mı,0,6,3,18,0
+82,ÜRETİM,Firelerle veya hurdalarla ilgili çalışmalar yapılıyor mu,2,5,3,15,10
+83,PAZARLAMA,Marka iletişim planı var mı,0,2,3,6,0
+84,İHRACAT,İhracat çalışmaları yeterli düzeyde mi (satışların % 10 ve üstü),2,5,3,15,10
+85,SATINALMA,Tedarikçi performans ölçümleri yapılıyor mu,2,6,3,18,12
+86,YÖNETİM,Bağımsız dış denetim yapılıyor mu,0,2,3,6,0
+87,YÖNETİM,Yeminli mali müşavirle çalışılıyor mu,3,3,3,9,9
+88,ÜRETİM,Kurumsal kaynak planlaması sistemi var mı,2,8,3,24,16
+89,YÖNETİM,Şirkette çalışan aile fertleri arasındaki ilişkilerin düzeyi,1,10,3,30,10
+90,YÖNETİM,Şirkette gelecek kuşakların varlığı,3,10,3,30,30
+91,İK,Yetkinlik yönetimi çalışması yapılmış mı,0,5,3,15,0
+92,FİNANS,Finansal analiz çalışmaları yapılıyor mu,1,6,3,18,6
+93,PAZARLAMA,"Bayi, acente, distribütör veya satış noktaları toplantıları yıllık olarak yapılıyor mu",1,8,3,24,8
+94,YÖNETİM,Şirket çalışmaları sıkı bir şekilde denetleniyor mu (iç denetim vb. birim var mı),0,10,3,30,0
+95,PAZARLAMA,Yurt dışı marka tescili var mı,3,3,3,9,9
+96,PAZARLAMA,Hedef yurtdışı pazarlarla ilgili çalışmalar var mı,2,10,3,30,20
+97,PAZARLAMA,Hedef yurtdışı pazarda marka tescili var mı,3,2,3,6,6
+98,FİNANS,Özkaynakların yeterliliği (borçlanma durumu),3,8,3,24,24
+99,PAZARLAMA,Şirketin satış gücü ,2,10,3,30,20
+100,İK,İş akış şemaları oluşturulmuş mu,1,2,3,6,2
+101,YÖNETİM,Genel müdür (koordinatör) belli ve yeterli mi,3,5,3,15,15
+102,İK,"Düzenlenen toplantı, seminer ve eğitimlere katılım durumu ",2,8,3,24,16
+103,PAZARLAMA,Üst segment müşterilere hitap edebilme ,2,5,3,15,10
+104,PAZARLAMA,Reklam ve tanıtım çalışmaları ,2,6,3,18,12
+105,BİLGİ İŞLEM,Şirket içindeki bilgiler yedekleniyor ve depolanıyor mu,2,8,3,24,16
+106,YÖNETİM,Kurumsallaşmaya olan inanç ,2,10,3,30,20
+107,ÜRETİM,Kapasite kullanım oranı ,1,4,3,12,4
+108,YÖNETİM,Şirketinizde uzun vadeli stratejik planlama çalışmaları yapılıyor mu?,2,10,3,30,20
+109,BİLGİ İŞLEM,ERP yazılımı kullanılıyor mu?,2,8,3,24,16
+110,BİLGİ İŞLEM,Teknolojik yeterlilik ,2,5,3,15,10
+,,KURUMSALLAŞMA PUANI ,66.67,,,,
+,,,,,,,
+,,,,,,,
+,,,,,,,
+,,,,,,,
+,,,,,,,
