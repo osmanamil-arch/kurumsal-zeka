@@ -4,7 +4,9 @@ export default function DepartmentAndTitleModule({ departments, setDepartments, 
   const [activeTab, setActiveTab] = useState('departments'); // 'departments' | 'titles'
   
   const [newDeptName, setNewDeptName] = useState('');
-  
+  const [editingDeptId, setEditingDeptId] = useState(null);
+  const [editDeptName, setEditDeptName] = useState('');
+
   const handleAddDept = (e) => {
     e.preventDefault();
     if (!newDeptName.trim()) return;
@@ -18,9 +20,23 @@ export default function DepartmentAndTitleModule({ departments, setDepartments, 
     setTitles(titles.map(t => t.departmentId === id ? { ...t, departmentId: null } : t));
   };
 
+  const handleStartEditDept = (dept) => {
+    setEditingDeptId(dept.id);
+    setEditDeptName(dept.name);
+  };
+
+  const handleSaveDept = (id) => {
+    if (!editDeptName.trim()) return;
+    setDepartments(departments.map(d => d.id === id ? { ...d, name: editDeptName.trim() } : d));
+    setEditingDeptId(null);
+  };
+
   const [newTitleName, setNewTitleName] = useState('');
   const [newTitleDeptId, setNewTitleDeptId] = useState('');
   const [newTitleReportsToId, setNewTitleReportsToId] = useState('');
+
+  const [editingTitleId, setEditingTitleId] = useState(null);
+  const [editTitleData, setEditTitleData] = useState({ name: '', departmentId: '', reportsToTitleId: '' });
 
   const handleAddTitle = (e) => {
     e.preventDefault();
@@ -38,6 +54,26 @@ export default function DepartmentAndTitleModule({ departments, setDepartments, 
 
   const deleteTitle = (id) => {
     setTitles(titles.filter(t => t.id !== id));
+  };
+
+  const handleStartEditTitle = (title) => {
+    setEditingTitleId(title.id);
+    setEditTitleData({
+      name: title.name,
+      departmentId: title.departmentId || '',
+      reportsToTitleId: title.reportsToTitleId || ''
+    });
+  };
+
+  const handleSaveTitle = (id) => {
+    if (!editTitleData.name.trim() || !editTitleData.departmentId) return;
+    setTitles(titles.map(t => t.id === id ? {
+      ...t,
+      name: editTitleData.name.trim(),
+      departmentId: editTitleData.departmentId,
+      reportsToTitleId: editTitleData.reportsToTitleId || null
+    } : t));
+    setEditingTitleId(null);
   };
 
   const inputStyle = { width: '100%', padding: '0.75rem', borderRadius: '6px', border: '1px solid #cbd5e1', marginBottom: '1rem', fontSize: '0.9rem' };
@@ -98,14 +134,35 @@ export default function DepartmentAndTitleModule({ departments, setDepartments, 
                   </thead>
                   <tbody>
                      {departments.length === 0 ? <tr><td colSpan="2" style={{ padding: '2rem', textAlign: 'center', color: '#94a3b8' }}>Henüz departman eklenmemiş.</td></tr> : null}
-                     {departments.map(d => (
-                       <tr key={d.id} style={{ borderBottom: '1px solid #e2e8f0', transition: 'background 0.2s' }}>
-                         <td style={{ padding: '1rem', fontWeight: 600, color: '#1e293b' }}>{d.name}</td>
-                         <td style={{ padding: '1rem', textAlign: 'right' }}>
-                            <button onClick={() => deleteDept(d.id)} style={{ background: '#fee2e2', color: '#ef4444', border: '1px solid #fecdd3', padding: '0.4rem 0.8rem', borderRadius: '4px', cursor: 'pointer', fontWeight: 500 }}>Sil</button>
-                         </td>
-                       </tr>
-                     ))}
+                     {departments.map(d => {
+                       if (editingDeptId === d.id) {
+                         return (
+                           <tr key={d.id} style={{ borderBottom: '1px solid #e2e8f0' }}>
+                             <td style={{ padding: '0.5rem 1rem' }}>
+                               <input 
+                                 type="text" 
+                                 value={editDeptName} 
+                                 onChange={e => setEditDeptName(e.target.value)} 
+                                 style={{ padding: '0.4rem 0.6rem', borderRadius: '4px', border: '1px solid #cbd5e1', width: '90%', fontSize: '0.9rem' }}
+                               />
+                             </td>
+                             <td style={{ padding: '0.5rem 1rem', textAlign: 'right', minWidth: '130px' }}>
+                               <button onClick={() => handleSaveDept(d.id)} style={{ background: '#dcfce7', color: '#16a34a', border: '1px solid #bbf7d0', padding: '0.4rem 0.8rem', borderRadius: '4px', cursor: 'pointer', fontWeight: 500, marginRight: '0.5rem' }}>💾 Kaydet</button>
+                               <button onClick={() => setEditingDeptId(null)} style={{ background: '#f1f5f9', color: '#475569', border: '1px solid #cbd5e1', padding: '0.4rem 0.8rem', borderRadius: '4px', cursor: 'pointer', fontWeight: 500 }}>❌ İptal</button>
+                             </td>
+                           </tr>
+                         );
+                       }
+                       return (
+                         <tr key={d.id} style={{ borderBottom: '1px solid #e2e8f0', transition: 'background 0.2s' }}>
+                           <td style={{ padding: '1rem', fontWeight: 600, color: '#1e293b' }}>{d.name}</td>
+                           <td style={{ padding: '1rem', textAlign: 'right', minWidth: '130px' }}>
+                              <button onClick={() => handleStartEditDept(d)} style={{ background: '#eff6ff', color: '#2563eb', border: '1px solid #bfdbfe', padding: '0.4rem 0.8rem', borderRadius: '4px', cursor: 'pointer', fontWeight: 500, marginRight: '0.5rem' }}>✏️ Düzenle</button>
+                              <button onClick={() => deleteDept(d.id)} style={{ background: '#fee2e2', color: '#ef4444', border: '1px solid #fecdd3', padding: '0.4rem 0.8rem', borderRadius: '4px', cursor: 'pointer', fontWeight: 500 }}>Sil</button>
+                           </td>
+                         </tr>
+                       );
+                     })}
                   </tbody>
                 </table>
               </div>
@@ -128,12 +185,57 @@ export default function DepartmentAndTitleModule({ departments, setDepartments, 
                      {titles.map(t => {
                        const dept = departments.find(d => d.id === t.departmentId);
                        const reportsTo = titles.find(title => title.id === t.reportsToTitleId);
+                       
+                       if (editingTitleId === t.id) {
+                         return (
+                           <tr key={t.id} style={{ borderBottom: '1px solid #e2e8f0' }}>
+                             <td style={{ padding: '0.5rem 1rem' }}>
+                               <input 
+                                 type="text" 
+                                 value={editTitleData.name} 
+                                 onChange={e => setEditTitleData({ ...editTitleData, name: e.target.value })} 
+                                 style={{ padding: '0.4rem 0.6rem', borderRadius: '4px', border: '1px solid #cbd5e1', width: '90%', fontSize: '0.9rem' }}
+                               />
+                             </td>
+                             <td style={{ padding: '0.5rem 1rem' }}>
+                               <select 
+                                 value={editTitleData.departmentId} 
+                                 onChange={e => setEditTitleData({ ...editTitleData, departmentId: e.target.value })} 
+                                 style={{ padding: '0.4rem 0.6rem', borderRadius: '4px', border: '1px solid #cbd5e1', width: '90%', fontSize: '0.9rem' }}
+                               >
+                                 <option value="">-- Seçiniz --</option>
+                                 {departments.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
+                               </select>
+                             </td>
+                             <td style={{ padding: '0.5rem 1rem' }}>
+                               <select 
+                                 value={editTitleData.reportsToTitleId} 
+                                 onChange={e => setEditTitleData({ ...editTitleData, reportsToTitleId: e.target.value })} 
+                                 style={{ padding: '0.4rem 0.6rem', borderRadius: '4px', border: '1px solid #cbd5e1', width: '90%', fontSize: '0.9rem' }}
+                               >
+                                 <option value="">-- Yok --</option>
+                                 {titles.map(titleOption => titleOption.id !== t.id && (
+                                   <option key={titleOption.id} value={titleOption.id}>
+                                     {titleOption.name}
+                                   </option>
+                                 ))}
+                               </select>
+                             </td>
+                             <td style={{ padding: '0.5rem 1rem', textAlign: 'right', minWidth: '130px' }}>
+                               <button onClick={() => handleSaveTitle(t.id)} style={{ background: '#dcfce7', color: '#16a34a', border: '1px solid #bbf7d0', padding: '0.4rem 0.8rem', borderRadius: '4px', cursor: 'pointer', fontWeight: 500, marginRight: '0.5rem' }}>💾 Kaydet</button>
+                               <button onClick={() => setEditingTitleId(null)} style={{ background: '#f1f5f9', color: '#475569', border: '1px solid #cbd5e1', padding: '0.4rem 0.8rem', borderRadius: '4px', cursor: 'pointer', fontWeight: 500 }}>❌ İptal</button>
+                             </td>
+                           </tr>
+                         );
+                       }
+                       
                        return (
                        <tr key={t.id} style={{ borderBottom: '1px solid #e2e8f0', transition: 'background 0.2s' }}>
                          <td style={{ padding: '1rem', fontWeight: 600, color: '#1e293b' }}>{t.name}</td>
                          <td style={{ padding: '1rem', color: '#64748b' }}>{dept ? dept.name : <span style={{ color: '#ef4444' }}>Bağlantısız</span>}</td>
                          <td style={{ padding: '1rem', color: '#64748b' }}>{reportsTo ? reportsTo.name : <span style={{ color: '#94a3b8' }}>-</span>}</td>
-                         <td style={{ padding: '1rem', textAlign: 'right' }}>
+                         <td style={{ padding: '1rem', textAlign: 'right', minWidth: '130px' }}>
+                            <button onClick={() => handleStartEditTitle(t)} style={{ background: '#eff6ff', color: '#2563eb', border: '1px solid #bfdbfe', padding: '0.4rem 0.8rem', borderRadius: '4px', cursor: 'pointer', fontWeight: 500, marginRight: '0.5rem' }}>✏️ Düzenle</button>
                             <button onClick={() => deleteTitle(t.id)} style={{ background: '#fee2e2', color: '#ef4444', border: '1px solid #fecdd3', padding: '0.4rem 0.8rem', borderRadius: '4px', cursor: 'pointer', fontWeight: 500 }}>Sil</button>
                          </td>
                        </tr>
