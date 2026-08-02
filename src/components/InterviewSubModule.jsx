@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { sendEmail } from '../utils/mailService';
 
 export default function InterviewSubModule({ 
   employees, 
@@ -34,7 +35,35 @@ export default function InterviewSubModule({
     setInterviews(prev => [...prev, newEntry]);
     setNewInterview({ employeeId: '', plannedDate: '' });
     
-    alert(`Davet Maili Gönderildi!\nAlıcı: ${emp.email}\nTarih: ${newEntry.plannedDate}`);
+    const mailSubject = "Birebir Görüşme Davetiyesi";
+    const mailHtml = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px; background-color: #ffffff; color: #334155;">
+        <h2 style="color: #2563eb; margin-top: 0;">Birebir Görüşme Daveti</h2>
+        <p>Sayın <strong>${emp.name}</strong>,</p>
+        <p>Sizinle birebir görüşme planlanmıştır. Görüşme detayları aşağıdadır:</p>
+        <ul style="padding-left: 20px;">
+          <li><strong>Planlanan Tarih / Saat:</strong> ${new Date(newInterview.plannedDate).toLocaleString('tr-TR')}</li>
+          <li><strong>Görüşmeyi Yapan:</strong> Danışman Admin</li>
+        </ul>
+        <p>Görüşme zamanında hazır olmanızı rica eder, iyi çalışmalar dileriz.</p>
+        <p style="color: #64748b; font-size: 0.85rem; margin-top: 24px; border-top: 1px solid #e2e8f0; padding-top: 12px; line-height: 1.4;">
+          Bu e-posta Kurumsal Zeka Platformu tarafından otomatik olarak gönderilmiştir.
+        </p>
+      </div>
+    `;
+
+    sendEmail({ to: emp.email, subject: mailSubject, html: mailHtml })
+      .then(() => {
+        alert(`✅ Görüşme oluşturuldu ve davet maili çalışana (${emp.email}) başarıyla gönderildi!`);
+      })
+      .catch((err) => {
+        console.error('InterviewSubModule email error:', err);
+        alert(
+          `⚠️ Görüşme oluşturuldu fakat davet maili gönderilemedi.\n` +
+          `Hata: ${err.message}\n` +
+          `Lütfen çevre değişkenlerini (SMTP veya RESEND ayarlarını) kontrol edin.`
+        );
+      });
   };
 
   const handleComplete = (inv) => {
@@ -50,7 +79,38 @@ export default function InterviewSubModule({
     ));
     const inv = interviews.find(i => i.id === invId);
     const emp = employees.find(e => e.id === (inv ? inv.employeeId : ''));
-    if (emp) alert(`Güncelleme Maili Gönderildi!\nAlıcı: ${emp.email}\nYeni Tarih: ${newDate}`);
+    
+    if (emp) {
+      const mailSubject = "Birebir Görüşme Güncellemesi";
+      const mailHtml = `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px; background-color: #ffffff; color: #334155;">
+          <h2 style="color: #ea580c; margin-top: 0;">Görüşme Tarihi Güncellendi</h2>
+          <p>Sayın <strong>${emp.name}</strong>,</p>
+          <p>Daha önce planlanan birebir görüşmenizin tarihi güncellenmiştir. Yeni detaylar aşağıdadır:</p>
+          <ul style="padding-left: 20px;">
+            <li><strong>Yeni Tarih / Saat:</strong> ${new Date(newDate).toLocaleString('tr-TR')}</li>
+            <li><strong>Görüşmeyi Yapan:</strong> Danışman Admin</li>
+          </ul>
+          <p>Görüşme zamanında hazır olmanızı rica eder, iyi çalışmalar dileriz.</p>
+          <p style="color: #64748b; font-size: 0.85rem; margin-top: 24px; border-top: 1px solid #e2e8f0; padding-top: 12px; line-height: 1.4;">
+            Bu e-posta Kurumsal Zeka Platformu tarafından otomatik olarak gönderilmiştir.
+          </p>
+        </div>
+      `;
+
+      sendEmail({ to: emp.email, subject: mailSubject, html: mailHtml })
+        .then(() => {
+          alert(`✅ Görüşme tarihi güncellendi ve bildirim maili çalışana (${emp.email}) gönderildi!`);
+        })
+        .catch((err) => {
+          console.error('InterviewSubModule date change email error:', err);
+          alert(
+            `⚠️ Görüşme tarihi güncellendi fakat bildirim maili gönderilemedi.\n` +
+            `Hata: ${err.message}\n` +
+            `Lütfen çevre değişkenlerini (SMTP veya RESEND ayarlarını) kontrol edin.`
+          );
+        });
+    }
   };
 
   const handleDelete = (invId) => {

@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { testCatalog, TEST_GROUPS, getTestsByGroup, getSubGroups } from '../data/testCatalog';
 import { generateExamToken, SECURITY_LEVELS } from '../utils/examSecurity';
+import { sendEmail } from '../utils/mailService';
 
 // ═══════════════════════════════════════════════════════════════
 // TEST ATAMA PANELİ — Yönetici Tarafı
@@ -134,20 +135,41 @@ export default function TestAssignmentPanel({ assignments, setAssignments, onPre
 
     setAssignments(prev => [assignment, ...prev]);
 
-    // Simulate email
-    alert(
-      `✅ Test Ataması Oluşturuldu!\n\n` +
-      `📧 Simüle Edilen Mail:\n` +
-      `Alıcı: ${form.candidateEmail}\n` +
-      `Konu: Aday Değerlendirme Sınavı Davetiyesi\n\n` +
-      `Sayın ${form.candidateName},\n\n` +
-      `Değerlendirme sınavınız hazırlanmıştır.\n` +
-      `Sınav Linki: ${assignment.examLink}\n` +
-      `Son Tarih: ${deadline.toLocaleDateString('tr-TR')}\n` +
-      `Test Süresi: ${form.testDuration} dakika\n` +
-      `Test Sayısı: ${form.selectedTests.length}\n\n` +
-      `⚠️ Bu bir simülasyondur. Gerçek ortamda mail otomatik gönderilecektir.`
-    );
+    const mailSubject = "Aday Değerlendirme Sınavı Davetiyesi";
+    const mailHtml = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px; background-color: #ffffff; color: #334155;">
+        <h2 style="color: #2563eb; margin-top: 0;">Aday Değerlendirme Daveti</h2>
+        <p>Sayın <strong>${form.candidateName}</strong>,</p>
+        <p>Değerlendirme sınavınız hazırlanmıştır. Sınavınızı başlatmak için aşağıdaki bağlantıyı kullanabilirsiniz:</p>
+        <div style="margin: 24px 0; text-align: center;">
+          <a href="${assignment.examLink}" style="background-color: #2563eb; color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">Sınava Başla</a>
+        </div>
+        <p><strong>Sınav Detayları:</strong></p>
+        <ul style="padding-left: 20px;">
+          <li><strong>Toplam Süre:</strong> ${form.testDuration} dakika</li>
+          <li><strong>Test Sayısı:</strong> ${form.selectedTests.length} adet</li>
+          <li><strong>Son Erişim Tarihi:</strong> ${deadline.toLocaleDateString('tr-TR')}</li>
+        </ul>
+        <p style="color: #64748b; font-size: 0.85rem; margin-top: 24px; border-top: 1px solid #e2e8f0; padding-top: 12px; line-height: 1.4;">
+          * Sınavı bölünmeden tamamlayabileceğiniz sessiz bir ortamda başlatmanızı öneririz.<br/>
+          * Lütfen sınav penceresini kapatmayın veya sayfayı yenilemeyin.
+        </p>
+      </div>
+    `;
+
+    sendEmail({ to: form.candidateEmail, subject: mailSubject, html: mailHtml })
+      .then(() => {
+        alert(`✅ Sınav ataması yapıldı ve davet maili adayın e-posta adresine (${form.candidateEmail}) başarıyla gönderildi!`);
+      })
+      .catch((err) => {
+        console.error('TestAssignmentPanel email error:', err);
+        alert(
+          `⚠️ Sınav ataması yapıldı ancak davet maili gönderilemedi.\n` +
+          `Hata: ${err.message}\n` +
+          `Lütfen çevre değişkenlerini (SMTP veya RESEND ayarlarını) kontrol edin.\n\n` +
+          `Aday Sınav Linki: ${assignment.examLink}`
+        );
+      });
 
     setForm({ candidateName: '', candidateEmail: '', postingId: '', selectedTests: [], testDuration: 45, deadlineDays: 3, securityLevel: 'standard', notes: '' });
     setView('list');
