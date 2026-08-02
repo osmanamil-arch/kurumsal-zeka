@@ -127,16 +127,16 @@ function KobiPanelMain({ companyId, onCompanyChange }) {
   const [isAnonymousView, setIsAnonymousView] = useState(null);
   
   // ── Firma bazında izole state ──────────────────────────────────────────────
-  const [surveyHistory, setSurveyHistory] = useKobiState(companyId, 'surveyHistory', () => initialSurveyHistory);
+  const [surveyHistory, setSurveyHistory] = useKobiState(companyId, 'surveyHistory', () => companyId === 'comp_1' ? initialSurveyHistory : []);
   const [surveyResponses, setSurveyResponses] = useKobiState(companyId, 'surveyResponses', []);
-  const [companyInfo, setCompanyInfo] = useKobiState(companyId, 'companyInfo', () => ({
-    ...initialCompanyInfo,
-    name: activeCompany?.name || initialCompanyInfo.name,
-    title: activeCompany?.name || initialCompanyInfo.title,
-  }));
-  const [departments, setDepartments] = useKobiState(companyId, 'departments', initialDepartments);
-  const [titles, setTitles] = useKobiState(companyId, 'titles', initialTitles);
-  const [employees, setEmployees] = useKobiState(companyId, 'employees', initialEmployees);
+  const [companyInfo, setCompanyInfo] = useKobiState(companyId, 'companyInfo', () => (
+    companyId === 'comp_1' 
+      ? { ...initialCompanyInfo, name: activeCompany?.name || initialCompanyInfo.name, title: activeCompany?.name || initialCompanyInfo.title }
+      : { name: activeCompany?.name || '', title: activeCompany?.name || '', foundationDate: '', partnership: '', history: '' }
+  ));
+  const [departments, setDepartments] = useKobiState(companyId, 'departments', () => companyId === 'comp_1' ? initialDepartments : []);
+  const [titles, setTitles] = useKobiState(companyId, 'titles', () => companyId === 'comp_1' ? initialTitles : []);
+  const [employees, setEmployees] = useKobiState(companyId, 'employees', () => companyId === 'comp_1' ? initialEmployees : []);
   const [families, setFamilies] = useKobiState(companyId, 'jobFamilies', jobFamilies);
   const [functions, setFunctions] = useKobiState(companyId, 'jobFunctions', jobFunctions);
   const [levels, setLevels] = useKobiState(companyId, 'jobLevels', jobLevels);
@@ -146,8 +146,8 @@ function KobiPanelMain({ companyId, onCompanyChange }) {
   const [skillLib, setSkillLib] = useKobiState(companyId, 'skillLib', skillLibrary);
   const [knowLib, setKnowLib] = useKobiState(companyId, 'knowLib', knowledgeLibrary);
   const [certLib, setCertLib] = useKobiState(companyId, 'certLib', certificationLibrary);
-  const [jobAnalyses, setJobAnalyses] = useKobiState(companyId, 'jobAnalyses', initialJobAnalyses);
-  const [interviews, setInterviews] = useKobiState(companyId, 'interviews', initialInterviews);
+  const [jobAnalyses, setJobAnalyses] = useKobiState(companyId, 'jobAnalyses', () => companyId === 'comp_1' ? initialJobAnalyses : []);
+  const [interviews, setInterviews] = useKobiState(companyId, 'interviews', () => companyId === 'comp_1' ? initialInterviews : []);
   const [oneOnOneInterviews, setOneOnOneInterviews] = useKobiState(companyId, 'oneOnOneInterviews', []);
   const [swotEntries, setSwotEntries] = useKobiState(companyId, 'swotEntries', []);
   const [reportComments, setReportComments] = useKobiState(companyId, 'reportComments', {});
@@ -163,11 +163,70 @@ function KobiPanelMain({ companyId, onCompanyChange }) {
   const [jobPostings, setJobPostings] = useKobiState(companyId, 'jobPostings', []);
   const [strategyGoals, setStrategyGoals] = useKobiState(companyId, 'strategyGoals', []);
   const [dailyTasks, setDailyTasks] = useKobiState(companyId, 'dailyTasks', []);
-  const [meetings, setMeetings] = useKobiState(companyId, 'meetings', initialMeetings);
-  const [roadmapActions, setRoadmapActions] = useKobiState(companyId, 'roadmapActions', initialRoadmapActions);
+  const [meetings, setMeetings] = useKobiState(companyId, 'meetings', () => companyId === 'comp_1' ? initialMeetings : []);
+  const [roadmapActions, setRoadmapActions] = useKobiState(companyId, 'roadmapActions', () => companyId === 'comp_1' ? initialRoadmapActions : []);
   const [performanceCampaigns, setPerformanceCampaigns] = useKobiState(companyId, 'perfCampaigns', []);
   const [evalFactors, setEvalFactors] = useKobiState(companyId, 'evalFactors', hierarchicalFactors);
-  const [jobEvaluations, setJobEvaluations] = useKobiState(companyId, 'jobEvaluations', initialJobEvaluations);
+  const [jobEvaluations, setJobEvaluations] = useKobiState(companyId, 'jobEvaluations', () => companyId === 'comp_1' ? initialJobEvaluations : []);
+
+  // Self-cleaning hook for custom companies (to purge any persistent mock/demo data)
+  useEffect(() => {
+    if (companyId && companyId !== 'comp_1') {
+      let changed = false;
+
+      // Check if employees state contains mock IDs
+      if (Array.isArray(employees) && employees.some(e => e.id === 'e1' || e.id === 'e2' || e.id === 'e3' || e.id === 'e4' || e.id === 'e5')) {
+        setEmployees([]);
+        changed = true;
+      }
+      
+      // Check if departments contains mock IDs
+      if (Array.isArray(departments) && departments.some(d => d.id === 'd1' || d.id === 'd2' || d.id === 'd3' || d.id === 'd4')) {
+        setDepartments([]);
+        changed = true;
+      }
+
+      // Check if titles contains mock IDs
+      if (Array.isArray(titles) && titles.some(t => t.id === 't1' || t.id === 't2' || t.id === 't3' || t.id === 't4' || t.id === 't5')) {
+        setTitles([]);
+        changed = true;
+      }
+
+      // Check if surveyHistory contains mock IDs
+      if (Array.isArray(surveyHistory) && surveyHistory.some(s => s.id === 'h1' || s.id === 'h2' || s.id === 'h3' || s.id === 'h4')) {
+        setSurveyHistory([]);
+        changed = true;
+      }
+
+      // Check if jobAnalyses contains mock IDs
+      if (Array.isArray(jobAnalyses) && jobAnalyses.some(ja => ja.id === 'ja1' || ja.id === 'ja0' || ja.id === 'ja2' || ja.id === 'ja3')) {
+        setJobAnalyses([]);
+        changed = true;
+      }
+
+      // Check if interviews contains mock IDs
+      if (Array.isArray(interviews) && interviews.some(i => i.id === 'i1')) {
+        setInterviews([]);
+        changed = true;
+      }
+
+      // Check if meetings contains mock IDs
+      if (Array.isArray(meetings) && meetings.some(m => m.id === 'm1')) {
+        setMeetings([]);
+        changed = true;
+      }
+
+      // Check if roadmapActions contains mock IDs
+      if (Array.isArray(roadmapActions) && roadmapActions.some(r => r.id === '1' || r.id === '2')) {
+        setRoadmapActions([]);
+        changed = true;
+      }
+
+      if (changed) {
+        console.log(`Cleaned up demo/mock data for custom company: ${companyId}`);
+      }
+    }
+  }, [companyId, employees, departments, titles, surveyHistory, jobAnalyses, interviews, meetings, roadmapActions, setEmployees, setDepartments, setTitles, setSurveyHistory, setJobAnalyses, setInterviews, setMeetings, setRoadmapActions]);
 
   // Sanitized array guards to prevent crashes if Supabase returns null or non-array states
   const sanitizedSurveyHistory = Array.isArray(surveyHistory) ? surveyHistory : [];
