@@ -1,5 +1,5 @@
 import React, { useMemo, useEffect } from 'react';
-import { ReactFlow, MiniMap, Controls, Background, useNodesState, useEdgesState } from '@xyflow/react';
+import { ReactFlow, MiniMap, Controls, Background, useNodesState, useEdgesState, Handle, Position } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 
 const CustomNode = ({ data }) => {
@@ -14,8 +14,15 @@ const CustomNode = ({ data }) => {
       boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
       minWidth: '220px',
       textAlign: 'center',
+      position: 'relative',
       transition: 'all 0.3s ease'
     }}>
+      <Handle 
+        type="target" 
+        position={Position.Top} 
+        style={{ background: '#94a3b8', width: '8px', height: '8px', borderRadius: '50%' }} 
+      />
+
       <div style={{ 
         fontSize: '0.95rem', 
         fontWeight: 'bold', 
@@ -44,6 +51,12 @@ const CustomNode = ({ data }) => {
       }}>
         {data.department || ''}
       </div>
+
+      <Handle 
+        type="source" 
+        position={Position.Bottom} 
+        style={{ background: '#94a3b8', width: '8px', height: '8px', borderRadius: '50%' }} 
+      />
     </div>
   );
 };
