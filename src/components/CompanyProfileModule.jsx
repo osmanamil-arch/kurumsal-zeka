@@ -142,6 +142,12 @@ export default function CompanyProfileModule({
           🏢 Şirket Bilgileri
         </button>
         <button 
+          className={`tab-btn ${activeSubTab === 'masterData' ? 'active' : ''}`}
+          onClick={() => setActiveSubTab('masterData')}
+        >
+          ⚙️ Departman & Ünvan Yönetimi
+        </button>
+        <button 
           className={`tab-btn ${activeSubTab === 'employees' ? 'active' : ''}`}
           onClick={() => setActiveSubTab('employees')}
         >
@@ -186,7 +192,16 @@ export default function CompanyProfileModule({
           </div>
         )}
 
-
+        {activeSubTab === 'masterData' && (
+          <div className="master-data-section fade-in" style={{ padding: '1.5rem 0' }}>
+             <DepartmentAndTitleModule 
+               departments={departments} 
+               setDepartments={setDepartments} 
+               titles={titles} 
+               setTitles={setTitles} 
+             />
+          </div>
+        )}
 
         {activeSubTab === 'employees' && (
           <div className="employees-section fade-in">
@@ -231,7 +246,26 @@ export default function CompanyProfileModule({
                <div className="emp-inputs">
                  <input type="text" placeholder="Ad Soyad *" required value={newEmployee.name} onChange={e => setNewEmployee({...newEmployee, name: e.target.value})} />
                  <input type="email" placeholder="E-Posta *" required value={newEmployee.email} onChange={e => setNewEmployee({...newEmployee, email: e.target.value})} />
-                 <select value={newEmployee.titleId} onChange={e => setNewEmployee({...newEmployee, titleId: e.target.value})} required>
+                 <select 
+                   value={newEmployee.titleId} 
+                   onChange={e => {
+                     const tid = e.target.value;
+                     const selectedTitle = titles.find(t => t.id === tid);
+                     let autoManagerId = '';
+                     if (selectedTitle && selectedTitle.reportsToTitleId) {
+                       const managerEmp = employees.find(emp => emp.titleId === selectedTitle.reportsToTitleId && emp.isActive !== false);
+                       if (managerEmp) {
+                         autoManagerId = managerEmp.id;
+                       }
+                     }
+                     setNewEmployee({
+                       ...newEmployee,
+                       titleId: tid,
+                       managerId: autoManagerId
+                     });
+                   }} 
+                   required
+                 >
                    <option value="">-- Ünvan / Pozisyon Seçin --</option>
                    {titles && titles.map(t => (
                      <option key={t.id} value={t.id}>
@@ -273,12 +307,48 @@ export default function CompanyProfileModule({
                         return (
                           <tr key={emp.id} className="edit-row">
                             <td><input type="text" value={editFormData.name} onChange={e => setEditFormData({...editFormData, name: e.target.value})} className="edit-input" /></td>
-                            <td><input type="text" value={editFormData.department || ''} onChange={e => setEditFormData({...editFormData, department: e.target.value})} className="edit-input" /></td>
-                            <td><input type="text" value={editFormData.title || ''} onChange={e => setEditFormData({...editFormData, title: e.target.value})} className="edit-input" /></td>
+                            <td>
+                              <span style={{ fontSize: '0.9rem' }}>
+                                {editFormData.department || '-'}
+                              </span>
+                            </td>
+                            <td>
+                              <select 
+                                value={editFormData.titleId || ''} 
+                                onChange={e => {
+                                  const tid = e.target.value;
+                                  const selectedT = titles.find(t => t.id === tid);
+                                  const selectedD = departments.find(d => d.id === selectedT?.departmentId);
+                                  let autoManagerId = editFormData.managerId;
+                                  if (selectedT && selectedT.reportsToTitleId) {
+                                    const managerEmp = employees.find(empItem => empItem.titleId === selectedT.reportsToTitleId && empItem.id !== emp.id && empItem.isActive !== false);
+                                    if (managerEmp) {
+                                      autoManagerId = managerEmp.id;
+                                    }
+                                  }
+                                  setEditFormData({
+                                    ...editFormData,
+                                    titleId: tid,
+                                    title: selectedT?.name || '',
+                                    departmentId: selectedD?.id || '',
+                                    department: selectedD?.name || '',
+                                    managerId: autoManagerId
+                                  });
+                                }}
+                                className="edit-input"
+                              >
+                                <option value="">-- Ünvan Seçin --</option>
+                                {titles.map(t => (
+                                  <option key={t.id} value={t.id}>
+                                    {t.name} ({(departments.find(d => d.id === t.departmentId) || {}).name || 'Departmansız'})
+                                  </option>
+                                ))}
+                              </select>
+                            </td>
                             <td>
                               <select value={editFormData.managerId || ''} onChange={e => setEditFormData({...editFormData, managerId: e.target.value})} className="edit-input">
                                 <option value="">-- Yok --</option>
-                                {employees.map(m => m.id !== emp.id && <option key={m.id} value={m.id}>{m.name}</option>)}
+                                  {employees.map(m => m.id !== emp.id && <option key={m.id} value={m.id}>{m.name}</option>)}
                               </select>
                             </td>
                             <td><input type="email" value={editFormData.email} onChange={e => setEditFormData({...editFormData, email: e.target.value})} className="edit-input" /></td>

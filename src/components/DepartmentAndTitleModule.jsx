@@ -20,12 +20,20 @@ export default function DepartmentAndTitleModule({ departments, setDepartments, 
 
   const [newTitleName, setNewTitleName] = useState('');
   const [newTitleDeptId, setNewTitleDeptId] = useState('');
+  const [newTitleReportsToId, setNewTitleReportsToId] = useState('');
 
   const handleAddTitle = (e) => {
     e.preventDefault();
     if (!newTitleName.trim() || !newTitleDeptId) return;
-    setTitles([...titles, { id: 't_' + Date.now(), name: newTitleName.trim(), departmentId: newTitleDeptId, level: 1 }]);
+    setTitles([...titles, { 
+      id: 't_' + Date.now(), 
+      name: newTitleName.trim(), 
+      departmentId: newTitleDeptId, 
+      reportsToTitleId: newTitleReportsToId || null,
+      level: 1 
+    }]);
     setNewTitleName('');
+    setNewTitleReportsToId('');
   };
 
   const deleteTitle = (id) => {
@@ -61,6 +69,17 @@ export default function DepartmentAndTitleModule({ departments, setDepartments, 
                </select>
                <label style={{ display: 'block', fontSize: '0.85rem', marginBottom: '0.4rem', fontWeight: 600, color: '#475569' }}>Ünvan Adı</label>
                <input type="text" placeholder="Ünvan Adı (Örn: Finans Müdürü)" value={newTitleName} onChange={e => setNewTitleName(e.target.value)} required style={inputStyle} />
+               
+               <label style={{ display: 'block', fontSize: '0.85rem', marginBottom: '0.4rem', fontWeight: 600, color: '#475569' }}>Raporlayacağı Ünvan (Yöneticisi)</label>
+               <select value={newTitleReportsToId} onChange={e => setNewTitleReportsToId(e.target.value)} style={inputStyle}>
+                 <option value="">-- Yok (En Üst Pozisyon) --</option>
+                 {titles.map(t => (
+                   <option key={t.id} value={t.id}>
+                     {t.name} ({(departments.find(d => d.id === t.departmentId) || {}).name || 'Departmansız'})
+                   </option>
+                 ))}
+               </select>
+               
                <button type="submit" style={{ width: '100%', padding: '0.75rem', background: '#2563eb', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 600 }}>+ Ekle</button>
              </form>
            )}
@@ -100,17 +119,20 @@ export default function DepartmentAndTitleModule({ departments, setDepartments, 
                     <tr style={{ background: '#f1f5f9', borderBottom: '2px solid #cbd5e1' }}>
                       <th style={{ padding: '1rem', color: '#475569' }}>Ünvan Adı</th>
                       <th style={{ padding: '1rem', color: '#475569' }}>Bağlı Departman</th>
+                      <th style={{ padding: '1rem', color: '#475569' }}>Rapor Edilen Ünvan</th>
                       <th style={{ padding: '1rem', textAlign: 'right', color: '#475569' }}>İşlem</th>
                     </tr>
                   </thead>
                   <tbody>
-                     {titles.length === 0 ? <tr><td colSpan="3" style={{ padding: '2rem', textAlign: 'center', color: '#94a3b8' }}>Henüz ünvan eklenmemiş.</td></tr> : null}
+                     {titles.length === 0 ? <tr><td colSpan="4" style={{ padding: '2rem', textAlign: 'center', color: '#94a3b8' }}>Henüz ünvan eklenmemiş.</td></tr> : null}
                      {titles.map(t => {
                        const dept = departments.find(d => d.id === t.departmentId);
+                       const reportsTo = titles.find(title => title.id === t.reportsToTitleId);
                        return (
                        <tr key={t.id} style={{ borderBottom: '1px solid #e2e8f0', transition: 'background 0.2s' }}>
                          <td style={{ padding: '1rem', fontWeight: 600, color: '#1e293b' }}>{t.name}</td>
                          <td style={{ padding: '1rem', color: '#64748b' }}>{dept ? dept.name : <span style={{ color: '#ef4444' }}>Bağlantısız</span>}</td>
+                         <td style={{ padding: '1rem', color: '#64748b' }}>{reportsTo ? reportsTo.name : <span style={{ color: '#94a3b8' }}>-</span>}</td>
                          <td style={{ padding: '1rem', textAlign: 'right' }}>
                             <button onClick={() => deleteTitle(t.id)} style={{ background: '#fee2e2', color: '#ef4444', border: '1px solid #fecdd3', padding: '0.4rem 0.8rem', borderRadius: '4px', cursor: 'pointer', fontWeight: 500 }}>Sil</button>
                          </td>
