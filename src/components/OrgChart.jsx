@@ -3,23 +3,45 @@ import { ReactFlow, MiniMap, Controls, Background, useNodesState, useEdgesState 
 import '@xyflow/react/dist/style.css';
 
 const CustomNode = ({ data }) => {
+  const isGreen = data.hasEmployee;
+  
   return (
     <div style={{
       padding: '10px 15px', 
       borderRadius: '8px',
-      background: '#fff',
-      border: '2px solid #cbd5e1',
+      background: isGreen ? '#dcfce7' : '#ffffff',
+      border: isGreen ? '2px solid #16a34a' : '2px solid #cbd5e1',
       boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
       minWidth: '220px',
-      textAlign: 'center'
+      textAlign: 'center',
+      transition: 'all 0.3s ease'
     }}>
-      <div style={{ fontSize: '1rem', fontWeight: 'bold', color: '#0f172a', marginBottom: '4px' }}>
+      <div style={{ 
+        fontSize: '0.95rem', 
+        fontWeight: 'bold', 
+        color: isGreen ? '#14532d' : '#64748b', 
+        marginBottom: '4px',
+        fontStyle: isGreen ? 'normal' : 'italic'
+      }}>
         {data.name}
       </div>
-      <div style={{ fontSize: '0.85rem', color: '#334155', background: '#f1f5f9', padding: '4px', borderRadius: '4px', marginBottom: '4px' }}>
+      <div style={{ 
+        fontSize: '0.85rem', 
+        color: '#0f172a', 
+        background: isGreen ? '#bbf7d0' : '#f1f5f9', 
+        padding: '4px', 
+        borderRadius: '4px', 
+        marginBottom: '4px',
+        fontWeight: '600'
+      }}>
         {data.title || 'Ünvan Yok'}
       </div>
-      <div style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 'bold', textTransform: 'uppercase' }}>
+      <div style={{ 
+        fontSize: '0.75rem', 
+        color: isGreen ? '#15803d' : '#64748b', 
+        fontWeight: 'bold', 
+        textTransform: 'uppercase' 
+      }}>
         {data.department || ''}
       </div>
     </div>
@@ -28,25 +50,25 @@ const CustomNode = ({ data }) => {
 
 const nodeTypes = { custom: CustomNode };
 
-export default function OrgChart({ employees }) {
+export default function OrgChart({ titles = [], departments = [], employees = [] }) {
   // Veriyi Hiyerarşik Ağaç (Tree) ve Node/Edge'lere dönüştürme
   const { initialNodes, initialEdges } = useMemo(() => {
     const resultNodes = [];
     const resultEdges = [];
 
-    // Map employee by id
-    const empMap = {};
-    employees.forEach(e => {
-        empMap[e.id] = { ...e, children: [] };
+    // Map title by id
+    const titleMap = {};
+    titles.forEach(t => {
+        titleMap[t.id] = { ...t, children: [] };
     });
     
     const roots = [];
-    employees.forEach(e => {
-        // Yöneticisi var ve yönetici sistemde kayıtlı ise
-        if (e.managerId && empMap[e.managerId]) {
-            empMap[e.managerId].children.push(empMap[e.id]);
+    titles.forEach(t => {
+        // Raporlayacağı ünvan var ve sistemde kayıtlı ise
+        if (t.reportsToTitleId && titleMap[t.reportsToTitleId]) {
+            titleMap[t.reportsToTitleId].children.push(titleMap[t.id]);
         } else {
-            roots.push(empMap[e.id]); // Kök düğüm (CEO, vb)
+            roots.push(titleMap[t.id]); // Kök ünvan (Genel Müdür, vb)
         }
     });
 
@@ -71,15 +93,24 @@ export default function OrgChart({ employees }) {
 
     // Pozisyon atama
     function assignPositions(node, startX, depth) {
-        // startX: Bu düğümün oluşturduğu alt ağacın başlangıç x koordinatı
         node.x = startX + (node.subtreeWidth / 2) - (nodeWidth / 2);
         node.y = depth * verticalSpacing;
         
+        const deptObj = departments.find(d => d.id === node.departmentId);
+        const matchingEmps = employees.filter(e => e.titleId === node.id && e.isActive !== false);
+        const hasEmployee = matchingEmps.length > 0;
+        const employeeNames = hasEmployee ? matchingEmps.map(e => e.name).join(', ') : 'Boş Pozisyon';
+
         resultNodes.push({
             id: node.id,
             type: 'custom',
             position: { x: node.x, y: node.y },
-            data: { name: node.name, title: node.title, department: node.department },
+            data: { 
+              name: employeeNames, 
+              title: node.name, 
+              department: deptObj ? deptObj.name : 'Departmansız',
+              hasEmployee
+            },
         });
 
         let currentX = startX;
@@ -100,11 +131,11 @@ export default function OrgChart({ employees }) {
     let initialX = 0;
     roots.forEach(r => {
         assignPositions(r, initialX, 0);
-        initialX += r.subtreeWidth; // Sonraki kök düğümü için kaydır
+        initialX += r.subtreeWidth;
     });
 
     return { initialNodes: resultNodes, initialEdges: resultEdges };
-  }, [employees]);
+  }, [titles, departments, employees]);
 
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
