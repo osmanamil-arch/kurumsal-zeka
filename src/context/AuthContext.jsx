@@ -180,103 +180,98 @@ export const AuthProvider = ({ children }) => {
 
   // ── AUTHENTICATION METHODS ──────────────────────────────────────────────────
   const login = async (email, password) => {
-    // Hardcoded fallback for default test accounts to guarantee they always work
-    if (email === 'osmanamil@gmail.com' && password === '123') {
-      const superadminUser = {
-        id: 'superadmin_1',
-        email: 'osmanamil@gmail.com',
-        role: 'superadmin',
-        name: 'Osman Amil'
-      };
-      setCurrentUser(superadminUser);
-      return { success: true, user: superadminUser };
-    }
-    if (email === 'danisman@kobi.com' && password === '123') {
-      const danismanUser = {
-        id: 'danisman_1',
-        email: 'danisman@kobi.com',
-        role: 'danisman',
-        name: 'Ahmet Yılmaz',
-        assignedCompanies: ['comp_1']
-      };
-      setCurrentUser(danismanUser);
-      return { success: true, user: danismanUser };
-    }
-    if (email === 'firma@sirket.com' && password === '123') {
-      const firmaUser = {
-        id: 'firma_1',
-        email: 'firma@sirket.com',
-        role: 'firma_yetkilisi',
-        name: 'Mehmet Kaya',
-        companyId: 'comp_1'
-      };
-      setCurrentUser(firmaUser);
-      return { success: true, user: firmaUser };
-    }
-    if (email === 'calisan@sirket.com' && password === '123') {
-      const calisanUser = {
-        id: 'calisan_1',
-        email: 'calisan@sirket.com',
-        role: 'calisan',
-        name: 'Ayşe Demir',
-        companyId: 'comp_1'
-      };
-      setCurrentUser(calisanUser);
-      return { success: true, user: calisanUser };
-    }
+    // Helper to get local fallback mock profiles
+    const getLocalFallbackUser = () => {
+      if (email === 'osmanamil@gmail.com' && password === '123') {
+        return {
+          id: 'superadmin_1',
+          email: 'osmanamil@gmail.com',
+          role: 'superadmin',
+          name: 'Osman Amil'
+        };
+      }
+      if (email === 'danisman@kobi.com' && password === '123') {
+        return {
+          id: 'danisman_1',
+          email: 'danisman@kobi.com',
+          role: 'danisman',
+          name: 'Ahmet Yılmaz',
+          assignedCompanies: ['comp_1']
+        };
+      }
+      if (email === 'firma@sirket.com' && password === '123') {
+        return {
+          id: 'firma_1',
+          email: 'firma@sirket.com',
+          role: 'firma_yetkilisi',
+          name: 'Mehmet Kaya',
+          companyId: 'comp_1'
+        };
+      }
+      if (email === 'calisan@sirket.com' && password === '123') {
+        return {
+          id: 'calisan_1',
+          email: 'calisan@sirket.com',
+          role: 'calisan',
+          name: 'Ayşe Demir',
+          companyId: 'comp_1'
+        };
+      }
+      return null;
+    };
 
-    // Check local mock database first for other custom local users
-    const localUser = users.find(u => u.email === email && u.password === password);
+    const fallbackUser = getLocalFallbackUser();
+    const localUser = fallbackUser || users.find(u => u.email === email && u.password === password);
 
+    // If Supabase is configured, always attempt online login first
     if (isSupabaseConfigured) {
       setIsLoading(true);
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) {
-        // Fallback to local database user if Supabase auth fails (in case local DB has custom credentials)
-        if (localUser) {
-          setCurrentUser(localUser);
+      try {
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+        if (!error && data?.user) {
+          // Fetch profile immediately to prevent race conditions in ProtectedRoute
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', data.user.id)
+            .single();
+
+          const userProfile = profile 
+            ? {
+                id: profile.id,
+                email: profile.email,
+                name: profile.name,
+                role: profile.role,
+                companyId: profile.company_id,
+                assignedCompanies: profile.assigned_companies || []
+              }
+            : {
+                id: data.user.id,
+                email: data.user.email,
+                name: data.user.user_metadata?.name || 'Kullanıcı',
+                role: data.user.user_metadata?.role || 'calisan',
+                companyId: data.user.user_metadata?.company_id || null,
+                assignedCompanies: data.user.user_metadata?.assigned_companies || []
+              };
+
+          setCurrentUser(userProfile);
           setIsLoading(false);
-          return { success: true, user: localUser };
+          return { success: true, user: userProfile };
         }
-        setIsLoading(false);
-        return { success: false, message: error.message };
+      } catch (err) {
+        console.warn("Supabase auth exception, falling back to local mode:", err);
       }
-
-      // Fetch profile immediately to prevent race conditions in ProtectedRoute
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', data.user.id)
-        .single();
-
-      const userProfile = profile 
-        ? {
-            id: profile.id,
-            email: profile.email,
-            name: profile.name,
-            role: profile.role,
-            companyId: profile.company_id,
-            assignedCompanies: profile.assigned_companies || []
-          }
-        : {
-            id: data.user.id,
-            email: data.user.email,
-            name: data.user.user_metadata?.name || 'Kullanıcı',
-            role: data.user.user_metadata?.role || 'calisan',
-            companyId: data.user.user_metadata?.company_id || null,
-            assignedCompanies: data.user.user_metadata?.assigned_companies || []
-          };
-
-      setCurrentUser(userProfile);
-      setIsLoading(false);
-      return { success: true, user: userProfile };
-    } else {
-      if (localUser) {
-        setCurrentUser(localUser);
-        return { success: true, user: localUser };
-      }
-      return { success: false, message: 'Geçersiz e-posta veya şifre' };
     }
+
+    // Fallback to offline/mock database authentication
+    if (localUser) {
+      setCurrentUser(localUser);
+      setIsLoading(false);
+      return { success: true, user: localUser };
+    }
+
+    setIsLoading(false);
+    return { success: false, message: 'Geçersiz kullanıcı adı veya şifre!' };
   };
 
   const shouldUseSupabase = () => {
