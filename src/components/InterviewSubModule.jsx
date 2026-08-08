@@ -276,7 +276,7 @@ export default function InterviewSubModule({
 
       {activeNoteId && (
         <div className="notes-area-overlay fade-in">
-          <div className="notes-area-content glass">
+          <div className="notes-area-content">
             <div className="notes-header">
               <h3>📝 Görüşme Notları: {employees.find(e => e.id === (interviews.find(i => i.id === activeNoteId)?.employeeId))?.name}</h3>
               <button className="close-btn" onClick={() => setActiveNoteId(null)}>✕</button>
