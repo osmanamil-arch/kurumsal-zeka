@@ -22,6 +22,12 @@ export default function CompanyProfileModule({
   const [editingEmpId, setEditingEmpId] = useState(null);
   const [editFormData, setEditFormData] = useState({});
 
+  // States for inline Title / Department creation inside employee form
+  const [showInlineTitleForm, setShowInlineTitleForm] = useState(false);
+  const [inlineTitle, setInlineTitle] = useState({ name: '', departmentId: '', reportsToTitleId: '' });
+  const [showInlineDeptInput, setShowInlineDeptInput] = useState(false);
+  const [inlineDeptName, setInlineDeptName] = useState('');
+
   const handleCompanyChange = (e) => {
     const { name, value } = e.target;
     setCompanyInfo(prev => ({ ...prev, [name]: value }));
@@ -45,6 +51,59 @@ export default function CompanyProfileModule({
     setNewEmployee({ name: '', departmentId: '', titleId: '', email: '', managerId: '' });
   };
 
+  const handleSaveInlineTitle = (e) => {
+    e.preventDefault();
+    if (!inlineTitle.name.trim()) return;
+
+    let finalDeptId = inlineTitle.departmentId;
+
+    // Create department if new
+    if (showInlineDeptInput && inlineDeptName.trim()) {
+      const newDeptId = 'dept_' + Date.now().toString();
+      setDepartments(prev => [...prev, { id: newDeptId, name: inlineDeptName.trim() }]);
+      finalDeptId = newDeptId;
+    }
+
+    if (!finalDeptId) {
+      alert('Lütfen bir departman seçin veya oluşturun.');
+      return;
+    }
+
+    // Create title
+    const newTitleId = 'title_' + Date.now().toString();
+    const newTitleObj = {
+      id: newTitleId,
+      name: inlineTitle.name.trim(),
+      departmentId: finalDeptId,
+      reportsToTitleId: inlineTitle.reportsToTitleId || null
+    };
+
+    setTitles(prev => [...prev, newTitleObj]);
+    
+    // Select this title in the main employee form
+    setNewEmployee(prev => {
+      // Find manager automatically
+      let autoManagerId = '';
+      if (newTitleObj.reportsToTitleId) {
+        const managerEmp = employees.find(emp => emp.titleId === newTitleObj.reportsToTitleId && emp.isActive !== false);
+        if (managerEmp) {
+          autoManagerId = managerEmp.id;
+        }
+      }
+      return {
+        ...prev,
+        titleId: newTitleId,
+        managerId: autoManagerId
+      };
+    });
+
+    // Reset inline states
+    setShowInlineTitleForm(false);
+    setInlineTitle({ name: '', departmentId: '', reportsToTitleId: '' });
+    setShowInlineDeptInput(false);
+    setInlineDeptName('');
+  };
+
   const processBulkUpload = () => {
     if (!bulkText.trim()) {
       alert('Lütfen Excel veya tablodan kopyaladığınız veriyi yapıştırın.');
@@ -53,6 +112,10 @@ export default function CompanyProfileModule({
 
     const lines = bulkText.split('\n');
     let addedCount = 0;
+    
+    // Create local copies to prevent state async updates causing conflicts during iteration
+    const updatedDepartments = [...departments];
+    const updatedTitles = [...titles];
     const importedEmps = [];
 
     lines.forEach(line => {
@@ -67,10 +130,29 @@ export default function CompanyProfileModule({
          const titleStr = parts[3] ? parts[3].trim() : '';
          const managerStr = parts[4] ? parts[4].trim() : '';
 
-         // Mevcut kütüphanede eşleştirme dene
-         const matchedTitle = titles.find(t => t.name.toLowerCase() === titleStr.toLowerCase());
-         const matchedDept = departments.find(d => d.name.toLowerCase() === deptStr.toLowerCase()) || (matchedTitle ? departments.find(d => d.id === matchedTitle.departmentId) : undefined);
-         const matchedManager = employees.find(e => e.name.toLowerCase() === managerStr.toLowerCase()) || importedEmps.find(e => e.name.toLowerCase() === managerStr.toLowerCase());
+         // 1. Resolve or Create Department
+         let matchedDept = updatedDepartments.find(d => d.name.toLowerCase() === deptStr.toLowerCase());
+         if (!matchedDept && deptStr) {
+           matchedDept = {
+             id: 'dept_' + Math.random().toString(36).substring(2, 8),
+             name: deptStr
+           };
+           updatedDepartments.push(matchedDept);
+         }
+
+         // 2. Resolve or Create Title
+         let matchedTitle = updatedTitles.find(t => t.name.toLowerCase() === titleStr.toLowerCase());
+         if (!matchedTitle && titleStr) {
+           matchedTitle = {
+             id: 'title_' + Math.random().toString(36).substring(2, 8),
+             name: titleStr,
+             departmentId: matchedDept ? matchedDept.id : '',
+             reportsToTitleId: null // Link in second pass
+           };
+           updatedTitles.push(matchedTitle);
+         } else if (matchedTitle && matchedDept && !matchedTitle.departmentId) {
+           matchedTitle.departmentId = matchedDept.id;
+         }
 
          const newId = 'emp_' + Date.now().toString() + Math.random().toString(36).substring(2, 6);
          
@@ -82,17 +164,40 @@ export default function CompanyProfileModule({
             departmentId: matchedDept ? matchedDept.id : '',
             title: titleStr || (matchedTitle ? matchedTitle.name : ''),
             department: deptStr || (matchedDept ? matchedDept.name : ''),
-            managerId: matchedManager ? matchedManager.id : ''
+            managerNameTemp: managerStr, // Hold temporarily to link reportsToTitleId
+            managerId: ''
          });
          addedCount++;
       }
     });
 
+    // 4. Second Pass: Link reportsToTitleId on newly created titles and resolve employee managerIds
+    importedEmps.forEach(emp => {
+      if (emp.managerNameTemp) {
+        const mgrEmp = employees.find(e => e.name.toLowerCase() === emp.managerNameTemp.toLowerCase()) || 
+                       importedEmps.find(e => e.name.toLowerCase() === emp.managerNameTemp.toLowerCase());
+        
+        if (mgrEmp) {
+          emp.managerId = mgrEmp.id;
+          
+          // Link title hierarchy dynamically if not yet linked
+          const empTitle = updatedTitles.find(t => t.id === emp.titleId);
+          if (empTitle && !empTitle.reportsToTitleId && mgrEmp.titleId) {
+            empTitle.reportsToTitleId = mgrEmp.titleId;
+          }
+        }
+      }
+      // Remove temporary key
+      delete emp.managerNameTemp;
+    });
+
     if (addedCount > 0) {
+       setDepartments(updatedDepartments);
+       setTitles(updatedTitles);
        setEmployees(prev => [...prev, ...importedEmps]);
        setBulkText('');
        setShowBulkUpload(false);
-       alert(`${addedCount} adet çalışan başarıyla sisteme aktarıldı!`);
+       alert(`${addedCount} adet çalışan başarıyla aktarıldı. İlgili departman ve ünvanlar otomatik olarak oluşturulup organizasyon şemasına bağlandı!`);
     } else {
        alert('Okunabilir veri bulunamadı. Sütunların "Sekme (Tab)" ile ayrıldığından emin olun. Excelden direkt kopyalayabilirsiniz.');
     }
@@ -250,6 +355,14 @@ export default function CompanyProfileModule({
                    value={newEmployee.titleId} 
                    onChange={e => {
                      const tid = e.target.value;
+                     if (tid === 'NEW_TITLE') {
+                       setShowInlineTitleForm(true);
+                       setNewEmployee({
+                         ...newEmployee,
+                         titleId: ''
+                       });
+                       return;
+                     }
                      const selectedTitle = titles.find(t => t.id === tid);
                      let autoManagerId = '';
                      if (selectedTitle && selectedTitle.reportsToTitleId) {
@@ -272,6 +385,7 @@ export default function CompanyProfileModule({
                        {t.name} ({(departments && departments.find(d => d.id === t.departmentId) || {}).name || 'Departmansız'})
                      </option>
                    ))}
+                   <option value="NEW_TITLE" style={{ fontWeight: 'bold', color: '#2563eb' }}>➕ Yeni Ünvan Ekle...</option>
                  </select>
                  <select value={newEmployee.managerId} onChange={e => setNewEmployee({...newEmployee, managerId: e.target.value})}>
                    <option value="">-- Yönetici Seçimi (Bağlı Olduğu Kişi) --</option>
@@ -281,6 +395,96 @@ export default function CompanyProfileModule({
                  </select>
                  <button type="submit" className="add-btn">➕ Ekle</button>
                </div>
+               
+               {showInlineTitleForm && (
+                 <div className="inline-title-form fade-in" style={{ padding: '1rem', background: '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: '8px', marginBottom: '1.5rem', marginTop: '0.8rem', width: '100%', boxSizing: 'border-box' }}>
+                   <h5 style={{ margin: '0 0 0.8rem 0', color: '#1e293b', fontSize: '0.9rem', fontWeight: 'bold', textAlign: 'left' }}>➕ Hızlı Ünvan ve Departman Ekle</h5>
+                   
+                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.8rem', textAlign: 'left' }}>
+                     
+                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+                       <label style={{ fontSize: '0.75rem', fontWeight: 600, color: '#475569' }}>Ünvan Adı *</label>
+                       <input 
+                         type="text" 
+                         placeholder="Örn: Kıdemli Satış Uzmanı" 
+                         value={inlineTitle.name} 
+                         onChange={e => setInlineTitle({...inlineTitle, name: e.target.value})} 
+                         style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #cbd5e1', fontSize: '0.85rem' }} 
+                       />
+                     </div>
+
+                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+                       <label style={{ fontSize: '0.75rem', fontWeight: 600, color: '#475569' }}>Bağlı Departman *</label>
+                       <select 
+                         value={showInlineDeptInput ? 'NEW_DEPT' : inlineTitle.departmentId} 
+                         onChange={e => {
+                           if (e.target.value === 'NEW_DEPT') {
+                             setShowInlineDeptInput(true);
+                             setInlineTitle({...inlineTitle, departmentId: ''});
+                           } else {
+                             setShowInlineDeptInput(false);
+                             setInlineTitle({...inlineTitle, departmentId: e.target.value});
+                           }
+                         }}
+                         style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #cbd5e1', fontSize: '0.85rem' }}
+                       >
+                         <option value="">-- Seçin --</option>
+                         {departments.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
+                         <option value="NEW_DEPT" style={{ fontWeight: 'bold', color: '#2563eb' }}>➕ Yeni Departman Oluştur...</option>
+                       </select>
+                     </div>
+
+                     {showInlineDeptInput && (
+                       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+                         <label style={{ fontSize: '0.75rem', fontWeight: 600, color: '#475569' }}>Yeni Departman Adı *</label>
+                         <input 
+                           type="text" 
+                           placeholder="Örn: Lojistik ve Tedarik" 
+                           value={inlineDeptName} 
+                           onChange={e => setInlineDeptName(e.target.value)} 
+                           style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #cbd5e1', fontSize: '0.85rem' }} 
+                         />
+                       </div>
+                     )}
+
+                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+                       <label style={{ fontSize: '0.75rem', fontWeight: 600, color: '#475569' }}>Rapor Edilecek Ünvan (Yöneticisi)</label>
+                       <select 
+                         value={inlineTitle.reportsToTitleId} 
+                         onChange={e => setInlineTitle({...inlineTitle, reportsToTitleId: e.target.value})}
+                         style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #cbd5e1', fontSize: '0.85rem' }}
+                       >
+                         <option value="">-- Yok --</option>
+                         {titles.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
+                       </select>
+                     </div>
+
+                   </div>
+
+                   <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
+                     <button 
+                       type="button" 
+                       onClick={() => {
+                         setShowInlineTitleForm(false);
+                         setInlineTitle({ name: '', departmentId: '', reportsToTitleId: '' });
+                         setShowInlineDeptInput(false);
+                         setInlineDeptName('');
+                       }} 
+                       style={{ padding: '0.4rem 1rem', background: '#cbd5e1', color: '#334155', border: 'none', borderRadius: '4px', fontWeight: 600, cursor: 'pointer', fontSize: '0.8rem' }}
+                     >
+                       İptal
+                     </button>
+                     <button 
+                       type="button" 
+                       onClick={handleSaveInlineTitle} 
+                       style={{ padding: '0.4rem 1.2rem', background: '#10b981', color: 'white', border: 'none', borderRadius: '4px', fontWeight: 600, cursor: 'pointer', fontSize: '0.8rem' }}
+                     >
+                       Kaydet ve Seç
+                     </button>
+                   </div>
+                 </div>
+               )}
+
                <p style={{fontSize: '0.75rem', marginTop: '0.5rem', color: '#64748b'}}>Departman ve yönetici ilişkisi Ünvan seçiminden otomatik kurgulanmaktadır.</p>
             </form>
 
